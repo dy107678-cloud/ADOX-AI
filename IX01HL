@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADOX.AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1 id="logo"><span>ADOX</span><span class="ai">AI</span></h1>
+
+    <div id="messages">
+        <div id="empty-state">
+            <p>Ready when you are...</p>
+        </div>
+    </div>
+
+    <div id="input-wrapper">
+        <div id="input-area">
+            <textarea id="textarea" placeholder="Ask me anything..." rows="1"></textarea>
+            <button class="input-btn" id="expand-button" title="Expand">↗</button>
+            <button class="input-btn" id="send-button" title="Send" disabled>➤</button>
+        </div>
+        <p id="hint">Enter to send · Shift+Enter for new line</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
