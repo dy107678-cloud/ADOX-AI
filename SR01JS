@@ -1,0 +1,103 @@
+const textarea     = document.getElementById('textarea');
+const sendButton   = document.getElementById('send-button');
+const expandButton = document.getElementById('expand-button');
+const messages     = document.getElementById('messages');
+const emptyState   = document.getElementById('empty-state');
+const inputArea    = document.getElementById('input-area');
+
+// ── Auto-resize textarea ──
+function resizeTextarea() {
+    if (inputArea.classList.contains('expanded')) return;
+    textarea.style.height = '36px';
+    textarea.style.height = Math.min(textarea.scrollHeight, 140) + 'px';
+    textarea.style.overflowY = textarea.scrollHeight > 140 ? 'auto' : 'hidden';
+}
+
+textarea.addEventListener('input', () => {
+    resizeTextarea();
+    sendButton.disabled = textarea.value.trim() === '';
+});
+
+// ── Expand toggle ──
+expandButton.addEventListener('click', () => {
+    const expanded = inputArea.classList.toggle('expanded');
+    expandButton.textContent = expanded ? '↙' : '↗';
+    if (!expanded) {
+        textarea.style.height = '';
+        resizeTextarea();
+    }
+});
+
+// ── Enter to send ──
+textarea.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        if (!sendButton.disabled) sendMessage();
+    }
+});
+
+sendButton.addEventListener('click', sendMessage);
+
+// ── Send message ──
+function sendMessage() {
+    const text = textarea.value.trim();
+    if (!text) return;
+
+    // Hide empty state
+    if (emptyState) emptyState.remove();
+
+    // Add user bubble
+    appendMessage(text, 'user-message');
+
+    // Clear input
+    textarea.value = '';
+    textarea.style.height = '36px';
+    sendButton.disabled = true;
+    resizeTextarea();
+
+    // Show typing indicator
+    const typing = showTyping();
+
+    // ── TODO: replace this with real backend call ──
+    setTimeout(() => {
+        typing.remove();
+        appendMessage("I'm ADOX AI — backend not connected yet!", 'ai-message');
+    }, 1200);
+
+    // ── Real backend call (uncomment when ready) ──
+    /*
+    fetch('http://localhost:5000/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+    })
+    .then(r => r.json())
+    .then(data => {
+        typing.remove();
+        appendMessage(data.response, 'ai-message');
+    })
+    .catch(() => {
+        typing.remove();
+        appendMessage('Connection error. Is the backend running?', 'ai-message');
+    });
+    */
+}
+
+// ── Append a message bubble ──
+function appendMessage(text, cls) {
+    const div = document.createElement('div');
+    div.classList.add('message', cls);
+    div.textContent = text;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+// ── Show typing indicator ──
+function showTyping() {
+    const div = document.createElement('div');
+    div.classList.add('typing-indicator');
+    div.innerHTML = '<span></span><span></span><span></span>';
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+    return div;
+}
